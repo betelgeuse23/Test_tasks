@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Котики и миска</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            width: 500px;
+        }
+
+        form input {
+            width: 100%;
+            width: -webkit-fill-available;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+
+        form button {
+            width: 100%;
+            width: -webkit-fill-available;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            background-color: #f0f0f0;
+            cursor: pointer;
+        }
+          
+        form button:hover {
+            background-color: #ccc;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #outputContainer {
+            height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            width: 350px;
+        }
+
+        #simulation {
+            height: 200px;
+            display: flex;
+            align-items: center;
+        }
+
+        @keyframes pulsate {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .pulsating-text {
+            animation: pulsate 1.5s ease-in-out infinite;
+        }
+
+
+        .tall-stack {
+            animation: slide-plate-out 6000ms infinite;
+            animation-fill-mode: forwards;
+            animation-timing-function: ease;
+        }
+        .plate {
+            width: 230px;
+            height: 14px;
+            background: #D3EBEA;
+            position: relative;
+            border-radius: 6px 6px 2rem 2rem;
+            animation: slide-plate-in 6000ms infinite;
+            transform: translateX(100vw);
+            animation-fill-mode: forwards;
+            animation-timing-function: ease;
+        }
+        .plate .plate-bottom {
+            content: '';
+            display: block;
+            height: 50%;
+            width: 140px;
+            background: #c5e5e3;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -70px;
+            border-radius: 0 0 1rem 1rem;
+            z-index: 1;
+        }
+        .plate .shadow {
+            position: absolute;
+            top: 130%;
+            left: 50%;
+            margin-left: -90px;
+            z-index: 0;
+            width: 180px;
+            height: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 80%;
+            z-index: 0;
+        }
+        .butter {
+            width: 48px;
+            height: 12px;
+            background: #EADD4D;
+            margin: auto;
+            border-radius: 2px;
+            box-shadow: inset 0 -2px 0 2px rgba(85, 74, 35, 0.1);
+        }
+        .pancake {
+            width: 200px;
+            height: 14px;
+            background: #D8CB9F;
+            border-radius: 1rem;
+            box-shadow: inset 0 -2px 0 3px rgba(85, 74, 35, 0.1);
+            margin: auto;
+        }
+        .falling-element {
+            transform: translateY(-100vh);
+            animation-timing-function: ease-in;
+            animation-fill-mode: forward;
+            animation: element-drop 6000ms infinite;
+            position: relative;
+        }
+        .falling-element:nth-child(8) {
+            animation-delay: 0.4s;
+        }
+        .falling-element:nth-child(7) {
+            animation-delay: 0.62s;
+        }
+        .falling-element:nth-child(6) {
+            animation-delay: 0.84s;
+        }
+        .falling-element:nth-child(5) {
+            animation-delay: 1.06s;
+        }
+        .falling-element:nth-child(4) {
+            animation-delay: 1.28s;
+        }
+        .falling-element:nth-child(3) {
+            animation-delay: 1.5s;
+        }
+        .falling-element:nth-child(2) {
+            animation-delay: 1.72s;
+        }
+        .falling-element:nth-child(1) {
+            animation-delay: 1.94s;
+        }
+        @keyframes element-drop {
+            0%, 100% {
+              transform: translateY(-100vh) scaleY(0.7);
+              opacity: 1;
+            }
+            11% {
+              transform: translateY(20%) scaleY(1.2);
+            }
+            13% {
+              transform: translateY(-30%) scaleY(0.9);
+            }
+            14%, 67% {
+              transform: translateY(0%) scaleY(1);
+              opacity: 1;
+            }
+            68% {
+              opacity: 0;
+              transition: none;
+              transform: translateY(-100vh) scaleY(0.7);
+            }
+        }
+        @keyframes slide-plate-in {
+            0% {
+              transform: translateX(100vw);
+            }
+            15%, 100% {
+              transform: translateX(0);
+            }
+        }
+        @keyframes slide-plate-out {
+            65% {
+              transform: translateX(0);
+            }
+            85%, 100% {
+              transform: translateX(-100vw);
+            }
+        }         
+    </style>
+</head>
+<body>
+    <form id="parametersForm">
+        <label for="cats">Количество котиков:</label>
+        <input type="number" id="cats" name="cats" min="1" required>
+
+        <label for="foodAmount">Количество корма, чтобы наесться:</label>
+        <input type="number" id="foodAmount" name="foodAmount" min="1" required>
+
+        <label for="bowlCapacity">Вместительность миски:</label>
+        <input type="number" id="bowlCapacity" name="bowlCapacity" min="1" required>
+
+        <label for="timeToEat">Время, которое котику нужно, чтобы съесть корм (в секундах):</label>
+        <input type="number" id="timeToEat" name="timeToEat" min="1" required>
+
+        <label for="timeToRefill">Время, за которое бабушка пополняет миску (в секундах):</label>
+        <input type="number" id="timeToRefill" name="timeToRefill" min="1" required>
+
+        <button type="submit">Запустить</button>
+    </form>
+
+    <div id="simulation" style="display: none;">
+        <div id="loader">
+            <div class="tall-stack">
+              <div class="butter falling-element"></div>
+              <div class="pancake falling-element"></div>
+              <div class="pancake falling-element"></div>
+              <div class="pancake falling-element"></div>
+              <div class="pancake falling-element"></div>
+              <div class="pancake falling-element"></div>
+              <div class="pancake falling-element"></div>
+              <div class="plate">
+                <div class="plate-bottom"></div>
+                <div class="shadow"></div>
+              </div>
+            </div>
+        </div>
+        <h1 id="congrats" class="pulsating-text"></h1>
+    </div>
+    <div id="outputContainer" style="display: none;"></div>
+    <script>
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        const parametersForm = document.getElementById('parametersForm')
+
+        parametersForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            startSimulation();
+        })
+        
+        async function startSimulation() {
+            const cats = parseInt(document.getElementById('cats').value);
+            const foodAmount = parseInt(document.getElementById('foodAmount').value);
+            const bowlCapacity = parseInt(document.getElementById('bowlCapacity').value);
+            const timeToEat = parseInt(document.getElementById('timeToEat').value) * 1000;
+            const timeToRefill = parseInt(document.getElementById('timeToRefill').value) * 1000;
+
+            parametersForm.style.display = 'none';
+        
+            let totalTime = 0;
+            let foodInBowl = bowlCapacity;
+            let catsFed = 0;
+
+            const simulation = document.getElementById('simulation');
+            simulation.style.display = 'block';
+
+            const outputDiv = document.getElementById('outputContainer');
+            outputDiv.innerHTML = '';
+            outputDiv.style.display = 'block';
+
+            while (catsFed < cats) {
+                let catToEat = foodAmount;
+                outputDiv.innerHTML += `Котик под номером ${catsFed + 1} подошел к миске.<br>`;
+                outputContainer.scrollTop = outputContainer.scrollHeight;
+                while(catToEat > 0) {
+                    if(foodInBowl > 0) {
+                        let eated = (catToEat <= foodInBowl) ? catToEat : foodInBowl;
+                        foodInBowl -= eated;
+                        catToEat -= eated;
+                        outputDiv.innerHTML += `Котик под номером ${catsFed + 1} съел ${eated} корма.<br>`;
+                        outputContainer.scrollTop = outputContainer.scrollHeight;
+                        let time = timeToEat * (eated / foodAmount);
+                        await sleep(time);
+                        totalTime += time;
+                    } else {
+                        outputDiv.innerHTML += 'Миска пуста. Бабушка наполняет миску.<br>';
+                        outputContainer.scrollTop = outputContainer.scrollHeight;
+                        await sleep(timeToRefill);
+                        outputDiv.innerHTML += 'Миска наполнена.<br>';
+                        outputContainer.scrollTop = outputContainer.scrollHeight;
+                        foodInBowl = bowlCapacity;
+                        totalTime += timeToRefill;
+                    }
+                }
+                outputDiv.innerHTML += `Котик под номером ${catsFed + 1} отошел от миски.<br>`;
+                outputContainer.scrollTop = outputContainer.scrollHeight;
+                catsFed++;
+            }
+
+            outputDiv.innerHTML += `Все котики накормлены за ${totalTime / 1000} секунд.`;
+            outputContainer.scrollTop = outputContainer.scrollHeight;
+
+            const congrats = document.getElementById('congrats');
+            congrats.innerHTML = `Все котики накормлены за ${totalTime / 1000} секунд!`;
+
+            const loader = document.getElementById('loader');
+            loader.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
